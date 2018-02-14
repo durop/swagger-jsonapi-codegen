@@ -1,0 +1,3 @@
+# Swagger JSONAPI codegen
+
+... coming soon ...

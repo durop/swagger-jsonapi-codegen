@@ -1,0 +1,38 @@
+{
+  "name": "swagger-jsonapi-codegen",
+  "version": "0.0.1",
+  "description": " A code generator based on swagger-codegen ",
+  "main": "./node_modules/ts-node/dist/bin.js build-typescript.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renepardon/swagger-jsonapi-codegen.git"
+  },
+  "keywords": [
+    "swagger",
+    "jsonapi",
+    "codegen",
+    "typescript",
+    "generator"
+  ],
+  "author": "Christoph, René Pardon",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/renepardon/swagger-jsonapi-codegen/issues"
+  },
+  "homepage": "https://github.com/renepardon/swagger-jsonapi-codegen#readme",
+  "dependencies": {
+    "commander": "^2.14.1",
+    "js-beautify": "^1.7.5",
+    "jshint": "^2.9.5",
+    "lodash": "^4.17.5",
+    "mustache": "^2.3.0",
+    "ts-node": "^4.1.0",
+    "typescript": "^2.7.1"
+  }
+}
