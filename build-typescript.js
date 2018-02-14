@@ -18,9 +18,9 @@ let tsSourceCode = CodeGen.getTypescriptCode({
     moduleName: 'Api',
     swagger: swagger,
     template: {
-        'class': fs.readFileSync(path.join(process.cwd(), './templates/typescript/class.mustache'), 'utf-8'),
-        'method': fs.readFileSync(path.join(process.cwd(), './templates/typescript/method.mustache'), 'utf-8'),
-        'type': fs.readFileSync(path.join(process.cwd(), './templates/typescript/type.mustache'), 'utf-8')
+        'class': fs.readFileSync(path.join(__dirname, './templates/typescript/class.mustache'), 'utf-8'),
+        'method': fs.readFileSync(path.join(__dirname, './templates/typescript/method.mustache'), 'utf-8'),
+        'type': fs.readFileSync(path.join(__dirname, './templates/typescript/type.mustache'), 'utf-8')
     }
 });
 
