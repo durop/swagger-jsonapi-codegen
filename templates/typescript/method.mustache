@@ -2,7 +2,7 @@
 * {{&summary}}
 * @method
 {{#externalDocs}}
-* @see {@link {{&url}}|{{#description}}{{&description}}{{/description}}{{^description}}External docs{{/description}}}
+    * @see {@link {{&url}}|{{#description}}{{&description}}{{/description}}{{^description}}External docs{{/description}}}
 {{/externalDocs}}
 * @name {{&className}}#{{&methodName}}
 {{#parameters}}
@@ -10,14 +10,14 @@
 {{/parameters}}
 */
 {{&methodName}}(parameters: {
-        {{#parameters}}{{^isSingleton}}'{{&camelCaseName}}'{{&cardinality}}: {{> type}},
-        {{/isSingleton}}{{/parameters}}
-    },
-    queryStringParameters?: any,
-    headers?: any,
-    domain?: string
+{{#parameters}}{{^isSingleton}}'{{&camelCaseName}}'{{&cardinality}}: {{> type}},
+{{/isSingleton}}{{/parameters}}
+},
+queryStringParameters?: any,
+headers?: any,
+domain?: string
 
- ): Observable<Object> {
+): Observable<Object> {
 
     let requestDomain : string = domain || this.domain;
     headers = headers || {};
@@ -42,14 +42,14 @@
             {{^isSingleton}}
                 {{#isPatternType}}
                     Object.keys(parameters).forEach(function(parameterName) {
-                        if(new RegExp('{{&pattern}}').test(parameterName)){
-                            queryStringParameters[parameterName] = parameters[parameterName];
-                        }
+                    if(new RegExp('{{&pattern}}').test(parameterName)){
+                    queryStringParameters[parameterName] = parameters[parameterName];
+                    }
                     });
                 {{/isPatternType}}
                 {{^isPatternType}}
                     if(parameters['{{&camelCaseName}}'] !== undefined) {
-                        queryStringParameters['{{&name}}'] = parameters['{{&camelCaseName}}'];
+                    queryStringParameters['{{&name}}'] = parameters['{{&camelCaseName}}'];
                     }
                 {{/isPatternType}}
             {{/isSingleton}}
@@ -65,14 +65,14 @@
             {{/isSingleton}}
             {{^isSingleton}}
                 if(parameters['{{&camelCaseName}}'] !== undefined) {
-                    headers['{{&name}}'] = parameters['{{&camelCaseName}}'];
+                headers['{{&name}}'] = parameters['{{&camelCaseName}}'];
                 }
             {{/isSingleton}}
         {{/isHeaderParameter}}
 
         {{#isBodyParameter}}
             if(parameters['{{&camelCaseName}}'] !== undefined) {
-                json['{{&camelCaseName}}'] = parameters['{{&camelCaseName}}'];
+            json['{{&camelCaseName}}'] = parameters['{{&camelCaseName}}'];
             }
         {{/isBodyParameter}}
 
@@ -82,7 +82,7 @@
             {{/isSingleton}}
             {{^isSingleton}}
                 if(parameters['{{&camelCaseName}}'] !== undefined) {
-                    form['{{&name}}'] = parameters['{{&camelCaseName}}'];
+                form['{{&name}}'] = parameters['{{&camelCaseName}}'];
                 }
             {{/isSingleton}}
         {{/isFormParameter}}

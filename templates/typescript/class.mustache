@@ -1,5 +1,5 @@
 {{#imports}}
-/// <reference path='{{&.}}' />
+    /// <reference path='{{&.}}' />
 {{/imports}}
 
 import { Injectable } from '@angular/core';
@@ -13,258 +13,258 @@ import 'rxjs/add/observable/throw';
 import {TimeoutError} from 'rxjs/Rx';
 
 export interface IValidationError {
-    subject: string;
-    message: string;
+subject: string;
+message: string;
 }
 
 export interface IErrorResponse {
-    validationErrors?: IValidationError[];
-    headers?: HttpHeaders;
-    ok?: boolean;
-    status?: number;
-    statusText?: string;
-    type?: any;
-    url?: string;
-    // original body or event
-    _body?: any;
-    body?: any;
+validationErrors?: IValidationError[];
+headers?: HttpHeaders;
+ok?: boolean;
+status?: number;
+statusText?: string;
+type?: any;
+url?: string;
+// original body or event
+_body?: any;
+body?: any;
 
-    // php soft error
-    code?: number;
-    message?: string;
-    trace?: any;
-    errors?: any;
+// php soft error
+code?: number;
+message?: string;
+trace?: any;
+errors?: any;
 
-    isHandled?: boolean;
-    isValidationError?: boolean;
-    isPermissionDenied?: boolean;
-    isLocked?: boolean;
-    isServiceUnavailable?: boolean;
-    isUnknownError?: boolean;
-    isNotFound?: boolean;
-    isThrottleBlocked?: boolean;
-    isTimeoutError?: boolean;
+isHandled?: boolean;
+isValidationError?: boolean;
+isPermissionDenied?: boolean;
+isLocked?: boolean;
+isServiceUnavailable?: boolean;
+isUnknownError?: boolean;
+isNotFound?: boolean;
+isThrottleBlocked?: boolean;
+isTimeoutError?: boolean;
 
-    setHandled?: () => void;
+setHandled?: () => void;
 }
 
 export class ErrorResponse implements IErrorResponse {
 
-    validationErrors?: IValidationError[] = [];
-    headers?: HttpHeaders = null;
-    ok?: boolean = false;
-    status?: number = -1;
-    statusText?: string = '';
-    type?: any = 'Error';
-    url?: string = '';
-    _body?: any = null;
-    body?: any = null;
+validationErrors?: IValidationError[] = [];
+headers?: HttpHeaders = null;
+ok?: boolean = false;
+status?: number = -1;
+statusText?: string = '';
+type?: any = 'Error';
+url?: string = '';
+_body?: any = null;
+body?: any = null;
 
-    // php soft error
-    code?: number = -1;
-    message?: string = '';
-    trace?: any = null;
-    errors?: any = null;
+// php soft error
+code?: number = -1;
+message?: string = '';
+trace?: any = null;
+errors?: any = null;
 
-    isHandled?: boolean = false;
-    isValidationError?: boolean = false;
-    isPermissionDenied?: boolean = false;
-    isLocked?: boolean = false;
-    isServiceUnavailable?: boolean = false;
-    isNotFound?: boolean = false;
-    isUnknownError?: boolean = true;
-    isThrottleBlocked?: boolean = false;
-    isTimeoutError?: boolean = false;
+isHandled?: boolean = false;
+isValidationError?: boolean = false;
+isPermissionDenied?: boolean = false;
+isLocked?: boolean = false;
+isServiceUnavailable?: boolean = false;
+isNotFound?: boolean = false;
+isUnknownError?: boolean = true;
+isThrottleBlocked?: boolean = false;
+isTimeoutError?: boolean = false;
 
-    constructor(errorResponse?: IErrorResponse) {
+constructor(errorResponse?: IErrorResponse) {
 
-        if (errorResponse === 'ERR_TIMEOUT') {
-            this.isTimeoutError = true;
-            return;
-        }
-        this._body = errorResponse._body;
-        this._parseBody();
+if (errorResponse === 'ERR_TIMEOUT') {
+this.isTimeoutError = true;
+return;
+}
+this._body = errorResponse._body;
+this._parseBody();
 
-        this.headers = errorResponse.headers;
-        this.ok = errorResponse.ok;
-        this.status = errorResponse.status;
-        this.statusText = errorResponse.statusText;
-        this.type = errorResponse.type;
-        this.url = errorResponse.url;
+this.headers = errorResponse.headers;
+this.ok = errorResponse.ok;
+this.status = errorResponse.status;
+this.statusText = errorResponse.statusText;
+this.type = errorResponse.type;
+this.url = errorResponse.url;
 
-        // php soft error
-        this.code = errorResponse.code;
-        this.message = errorResponse.message;
+// php soft error
+this.code = errorResponse.code;
+this.message = errorResponse.message;
 
-        if (errorResponse.trace) {
-            this.trace = true;
-        }
-        this.errors = errorResponse.errors;
+if (errorResponse.trace) {
+this.trace = true;
+}
+this.errors = errorResponse.errors;
 
-        this._handleStatus();
-    }
+this._handleStatus();
+}
 
-    private _parseBody() {
-        // TODO: Implement string check.
-        if (this._body && typeof(this._body) === 'string') {
-            try {
-                this.body = JSON.parse(this._body);
-            } catch(e) {} // forget because body is no JSON in this case
-        }
-    }
+private _parseBody() {
+// TODO: Implement string check.
+if (this._body && typeof(this._body) === 'string') {
+try {
+this.body = JSON.parse(this._body);
+} catch(e) {} // forget because body is no JSON in this case
+}
+}
 
-    private _processValidationErrors() {
+private _processValidationErrors() {
 
-        if (this.body &&
-            (!this.body.errors || (
-                this.body.errors && this.body.errors.length === 0
-            ))
-           ) {
+if (this.body &&
+(!this.body.errors || (
+this.body.errors && this.body.errors.length === 0
+))
+) {
 
-            for (let fieldName in this.body) {
+for (let fieldName in this.body) {
 
-                if (this.body.hasOwnProperty(fieldName) &&
-                    this.body[fieldName] &&
-                    typeof this.body[fieldName] === 'string' &&
-                    this.body[fieldName].length > 0) {
+if (this.body.hasOwnProperty(fieldName) &&
+this.body[fieldName] &&
+typeof this.body[fieldName] === 'string' &&
+this.body[fieldName].length > 0) {
 
-                    this.validationErrors.push({
-                        subject: fieldName,
-                        message: this.body[fieldName]
-                    });
-                }
-            }
-        }
+this.validationErrors.push({
+subject: fieldName,
+message: this.body[fieldName]
+});
+}
+}
+}
 
-        if (this.body &&
-            this.body.errors) {
+if (this.body &&
+this.body.errors) {
 
-            for (let fieldName in this.body.errors) {
+for (let fieldName in this.body.errors) {
 
-                if (this.body.errors.hasOwnProperty(fieldName) &&
-                    this.body.errors[fieldName] &&
-                    this.body.errors[fieldName][0]) {
+if (this.body.errors.hasOwnProperty(fieldName) &&
+this.body.errors[fieldName] &&
+this.body.errors[fieldName][0]) {
 
-                    this.validationErrors.push({
-                        subject: fieldName,
-                        message: this.body.errors[fieldName][0]
-                    });
-                }
-            }
-        }
+this.validationErrors.push({
+subject: fieldName,
+message: this.body.errors[fieldName][0]
+});
+}
+}
+}
 
-        if (this.errors) {
+if (this.errors) {
 
-            for (let errorKey in this.errors) {
+for (let errorKey in this.errors) {
 
-                if (this.errors.hasOwnProperty(errorKey)) {
+if (this.errors.hasOwnProperty(errorKey)) {
 
-                    this.validationErrors.push({
-                        subject: errorKey,
-                        message: this.errors[errorKey]
-                    });
-                }
-            }
-        }
+this.validationErrors.push({
+subject: errorKey,
+message: this.errors[errorKey]
+});
+}
+}
+}
 
-        // fallback to simple error message; only if no other validation errors can be found
-        if (this.message && this.validationErrors.length == 0) {
+// fallback to simple error message; only if no other validation errors can be found
+if (this.message && this.validationErrors.length == 0) {
 
-            this.validationErrors.push({
-                subject: 'general-error-message',
-                message: this.message
-            });
-        }
-    }
+this.validationErrors.push({
+subject: 'general-error-message',
+message: this.message
+});
+}
+}
 
-    private _handleStatus() {
+private _handleStatus() {
 
-        // if code is defined, status is not (because it's a php-level error)
-        switch (this.status || this.code) {
+// if code is defined, status is not (because it's a php-level error)
+switch (this.status || this.code) {
 
-            // unprocessable entity, validation failed server-side
-            case 0:
-            case 422:
-                this.isUnknownError = false;
-                this.isValidationError = true;
-                this._processValidationErrors();
-                break;
+// unprocessable entity, validation failed server-side
+case 0:
+case 422:
+this.isUnknownError = false;
+this.isValidationError = true;
+this._processValidationErrors();
+break;
 
-            // not found
-            case 404:
-                this.isUnknownError = false;
-                this.isNotFound = true;
-                break;
+// not found
+case 404:
+this.isUnknownError = false;
+this.isNotFound = true;
+break;
 
-            // throttling
-            case 429:
-                this.isUnknownError = false;
-                this.isThrottleBlocked = true;
-                break;
+// throttling
+case 429:
+this.isUnknownError = false;
+this.isThrottleBlocked = true;
+break;
 
-            // forbidden
-            case 403:
-                this.isUnknownError = false;
-                this.isPermissionDenied = true;
-                break;
+// forbidden
+case 403:
+this.isUnknownError = false;
+this.isPermissionDenied = true;
+break;
 
-            // locked
-            case 423:
-                this.isUnknownError = false;
-                this.isLocked = true;
-                break;
+// locked
+case 423:
+this.isUnknownError = false;
+this.isLocked = true;
+break;
 
-            // service unavailable
-            case 503:
-                this.isUnknownError = false;
-                this.isServiceUnavailable = true;
-                break;
-        }
-    }
+// service unavailable
+case 503:
+this.isUnknownError = false;
+this.isServiceUnavailable = true;
+break;
+}
+}
 
-    setHandled() {
-        this.isHandled = true;
-    }
+setHandled() {
+this.isHandled = true;
+}
 }
 
 export interface IAbstractResponse {
 
-    // --- LOGIN response, not following api standards
-    token?: string;
+// --- LOGIN response, not following api standards
+token?: string;
 
 
-    // --- Laravel ERROR response
-    code?: number;
-    message?: string;
-    errors?: any;
-    trace?: any;
+// --- Laravel ERROR response
+code?: number;
+message?: string;
+errors?: any;
+trace?: any;
 
 
-    // --- JSON-API data structure
-    meta?: {
-        copyright?: string;
-        authors?: string[];
-        version?: string;
-    };
+// --- JSON-API data structure
+meta?: {
+copyright?: string;
+authors?: string[];
+version?: string;
+};
 
-    links?: {
-        self?: string;
-        first?: string;
-    };
+links?: {
+self?: string;
+first?: string;
+};
 
-    data?: any;
-    included?: any;
+data?: any;
+included?: any;
 }
 
 export interface IAbstractResponseData {
 
-    type?: string;
-    id?: number;
-    attributes?: any;
-    relationships?: any;
-    links?: {
-        self?: string;
-    }
+type?: string;
+id?: number;
+attributes?: any;
+relationships?: any;
+links?: {
+self?: string;
+}
 }
 
 export class IAbstractApiResponse<R extends IAbstractResponse, D> {
@@ -273,128 +273,128 @@ export class IAbstractApiResponse<R extends IAbstractResponse, D> {
     }
 
     setResponseData(response: R) {
-        this.response = response;
+    this.response = response;
     }
 
     getResponseData() : R {
-        return this.response;
+    return this.response;
     }
 
 
     getData(): D[] {
 
-        let data: D[] = [];
+    let data: D[] = [];
 
-        if (this.response && this.response.data) {
+    if (this.response && this.response.data) {
 
-            let dataRecord: IAbstractResponseData = this.response.data;
+    let dataRecord: IAbstractResponseData = this.response.data;
 
-            let dataItem = dataRecord.attributes;
+    let dataItem = dataRecord.attributes;
 
-            // map id
-            dataItem.id = dataRecord.id;
+    // map id
+    dataItem.id = dataRecord.id;
 
-            // Fetch dataRecord.relationships, collect this.response.included and map
-            // onto dataRecord.attributes[modelName + 's'] as array of data objects
-            if (dataRecord.relationships && this.response.included) {
+    // Fetch dataRecord.relationships, collect this.response.included and map
+    // onto dataRecord.attributes[modelName + 's'] as array of data objects
+    if (dataRecord.relationships && this.response.included) {
 
-                let relationshipMapper = (dataRecord: any, dataItem: any) => {
+    let relationshipMapper = (dataRecord: any, dataItem: any) => {
 
-                    for (let key in dataRecord.relationships) {
+    for (let key in dataRecord.relationships) {
 
-                        if (dataRecord.relationships.hasOwnProperty(key)) {
+    if (dataRecord.relationships.hasOwnProperty(key)) {
 
-                            if (dataRecord.relationships[key].data && dataRecord.relationships[key].data.length) {
+    if (dataRecord.relationships[key].data && dataRecord.relationships[key].data.length) {
 
-                                // multi
-                                for (let i = 0; i < dataRecord.relationships[key].data.length; i++) {
+    // multi
+    for (let i = 0; i < dataRecord.relationships[key].data.length; i++) {
 
-                                    // {id: number; type: string;}
-                                    let relation = dataRecord.relationships[key].data[i];
+    // {id: number; type: string;}
+    let relation = dataRecord.relationships[key].data[i];
 
-                                    this.response.included.forEach((relationDataRecord: IAbstractResponseData) => {
+    this.response.included.forEach((relationDataRecord: IAbstractResponseData) => {
 
-                                        let relBaseName = relationDataRecord.type.replace(dataRecord.type, '').toLowerCase();
+    let relBaseName = relationDataRecord.type.replace(dataRecord.type, '').toLowerCase();
 
-                                        if (relation.id == relationDataRecord.id &&
-                                            relation.type == relationDataRecord.type) {
+    if (relation.id == relationDataRecord.id &&
+    relation.type == relationDataRecord.type) {
 
-                                            let relName = relBaseName + 's';
+    let relName = relBaseName + 's';
 
-                                            if (!dataItem[relName]) {
-                                                dataItem[relName] = [];
-                                            }
-                                            let relationDataItem = relationDataRecord.attributes;
-
-                                            // map id
-                                            relationDataItem.id = relationDataRecord.id;
-
-                                            if (relationDataRecord.relationships) {
-
-                                                // go recursive
-                                                relationDataItem = relationshipMapper(relationDataRecord, relationDataItem);
-                                            }
-                                            dataItem[relName].push(relationDataItem);
-                                        }
-                                    });
-                                }
-
-                            } else if (dataRecord.relationships[key].data) {
-
-                                // single
-                                let relation = dataRecord.relationships[key].data;
-
-                                this.response.included.forEach((relationDataRecord: IAbstractResponseData) => {
-
-                                    let relBaseName = relationDataRecord.type.replace(dataRecord.type, '').toLowerCase();
-
-                                    if (relation.id == relationDataRecord.id &&
-                                        relation.type == relationDataRecord.type) {
-
-                                        let relName = relBaseName;
-
-                                        if (!dataItem[relName]) {
-                                            dataItem[relName] = [];
-                                        }
-
-                                        let relationDataItem = relationDataRecord.attributes;
-
-                                        // map id
-                                        relationDataItem.id = relationDataRecord.id;
-
-                                        if (relationDataRecord.relationships) {
-
-                                            // go recursive
-                                            relationDataItem = relationshipMapper(relationDataRecord, relationDataItem);
-                                        }
-                                        dataItem[relName] = relationDataItem;
-                                    }
-                                });
-                            }
-                        }
-                    }
-                    return dataItem;
-                };
-
-                dataItem = relationshipMapper(dataRecord, dataItem);
-            }
-
-            data.push(dataItem);
-        }
-        return data;
+    if (!dataItem[relName]) {
+    dataItem[relName] = [];
     }
-}
+    let relationDataItem = relationDataRecord.attributes;
+
+    // map id
+    relationDataItem.id = relationDataRecord.id;
+
+    if (relationDataRecord.relationships) {
+
+    // go recursive
+    relationDataItem = relationshipMapper(relationDataRecord, relationDataItem);
+    }
+    dataItem[relName].push(relationDataItem);
+    }
+    });
+    }
+
+    } else if (dataRecord.relationships[key].data) {
+
+    // single
+    let relation = dataRecord.relationships[key].data;
+
+    this.response.included.forEach((relationDataRecord: IAbstractResponseData) => {
+
+    let relBaseName = relationDataRecord.type.replace(dataRecord.type, '').toLowerCase();
+
+    if (relation.id == relationDataRecord.id &&
+    relation.type == relationDataRecord.type) {
+
+    let relName = relBaseName;
+
+    if (!dataItem[relName]) {
+    dataItem[relName] = [];
+    }
+
+    let relationDataItem = relationDataRecord.attributes;
+
+    // map id
+    relationDataItem.id = relationDataRecord.id;
+
+    if (relationDataRecord.relationships) {
+
+    // go recursive
+    relationDataItem = relationshipMapper(relationDataRecord, relationDataItem);
+    }
+    dataItem[relName] = relationDataItem;
+    }
+    });
+    }
+    }
+    }
+    return dataItem;
+    };
+
+    dataItem = relationshipMapper(dataRecord, dataItem);
+    }
+
+    data.push(dataItem);
+    }
+    return data;
+    }
+    }
 
 
-export type CallbackHandler = (errorResponse?: ErrorResponse) => void;
-export type RequestHook = () => boolean;
+    export type CallbackHandler = (errorResponse?: ErrorResponse) => void;
+    export type RequestHook = () => boolean;
 
-{{#definitions}}
+    {{#definitions}}
 
-    {{#isModel}}
-        export interface I{{&modelPlainName}} {{#tsType}}{{> type}}{{/tsType}}
+        {{#isModel}}
+            export interface I{{&modelPlainName}} {{#tsType}}{{> type}}{{/tsType}}
 
-        export interface I{{&modelRawName}} extends I{{&modelPlainName}} {
+            export interface I{{&modelRawName}} extends I{{&modelPlainName}} {
 
             {{#hasIncluded}}
 
@@ -403,38 +403,44 @@ export type RequestHook = () => boolean;
                 {{/includedRelations}}
 
             {{/hasIncluded}}
-        }
+            }
 
-        export interface I{{&modelPlainName}}ResponseData extends IAbstractResponseData {
+            export interface I{{&modelPlainName}}ResponseData extends IAbstractResponseData {
 
             attributes?: I{{&modelPlainName}}[];
 
-        }
+            }
 
-        export interface I{{&modelPlainName}}Response extends IAbstractResponse {
+            export interface I{{&modelPlainName}}Response extends IAbstractResponse {
 
             data: I{{&modelPlainName}}ResponseData[];
 
             {{#hasIncluded}}
                 included?: {{&includedTypeDef}};
             {{/hasIncluded}}
+            }
+
+            export class I{{&modelRawName}}Response <R extends I{{&modelPlainName}}Response, D extends I{{&modelRawName}}> extends IAbstractApiResponse<R, D> {
+
+            }
+
+        {{/isModel}}
+    {{/definitions}}
+
+    {{#enumerations}}
+        enum {{tsType}} {
+
+        {{#enum}}{{.}} = '{{.}}',{{/enum}}
         }
+    {{/enumerations}}
 
-        export class I{{&modelRawName}}Response <R extends I{{&modelPlainName}}Response, D extends I{{&modelRawName}}> extends IAbstractApiResponse<R, D> {
-
-        }
-
-    {{/isModel}}
-{{/definitions}}
-
-
-/**
- * {{&description}}
- * @class {{&className}}
- * @param {(string)} [domainOrOptions] - The project domain.
- */
-@Injectable()
-export class {{&className}} {
+    /**
+    * {{&description}}
+    * @class {{&className}}
+    * @param {(string)} [domainOrOptions] - The project domain.
+    */
+    @Injectable()
+    export class {{&className}} {
 
     private domain: string = '{{&domain}}';
     public authorizationToken : string;
@@ -449,114 +455,114 @@ export class {{&className}} {
 
     setAuthorizationToken(authorizationToken : string) {
 
-        this.authorizationToken = authorizationToken;
+    this.authorizationToken = authorizationToken;
 
-       // let tokenPayload = jwtDecode(this.authorizationToken);
+    // let tokenPayload = jwtDecode(this.authorizationToken);
 
-       // this.userId =  (<any>tokenPayload).sub;
-       // this.loginExpirationTime = (<any>tokenPayload).exp;
-    }
+    // this.userId =  (<any>tokenPayload).sub;
+        // this.loginExpirationTime = (<any>tokenPayload).exp;
+            }
 
-    /**
-     * @param timeout In seconds
-     */
-    setTimeout(timeout: number) {
-        this.timeout = timeout * 1000;
-    }
+            /**
+            * @param timeout In seconds
+            */
+            setTimeout(timeout: number) {
+            this.timeout = timeout * 1000;
+            }
 
-    getUserId() {
-        return this.userId;
-    }
+            getUserId() {
+            return this.userId;
+            }
 
-    getLoginExpirationTime() {
-        return this.loginExpirationTime;
-    }
+            getLoginExpirationTime() {
+            return this.loginExpirationTime;
+            }
 
-    getDomain() {
-        return this.domain;
-    }
+            getDomain() {
+            return this.domain;
+            }
 
-    setGeneralErrorHandler(handler: CallbackHandler) {
-        this.generalErrorHandler = handler;
-    }
+            setGeneralErrorHandler(handler: CallbackHandler) {
+            this.generalErrorHandler = handler;
+            }
 
-    setRequestHook(handler: RequestHook) {
-        this.requestHook = handler;
-    }
+            setRequestHook(handler: RequestHook) {
+            this.requestHook = handler;
+            }
 
-    private request(method: string, url: string, queryStringParameters: any, json: any, form: any, headers: any) : Observable<Object> {
+            private request(method: string, url: string, queryStringParameters: any, json: any, form: any, headers: any) : Observable<Object> {
 
-        if (!this.requestHook()) {
-            return;
-        }
+                if (!this.requestHook()) {
+                return;
+                }
 
-        let bodyData : any;
-        let headerData : HttpHeaders = new HttpHeaders();
-        let requestOptions : {};
-        let queryStringKeys : any;
-        let queryString : string;
+                let bodyData : any;
+                let headerData : HttpHeaders = new HttpHeaders();
+                let requestOptions : {};
+                let queryStringKeys : any;
+                let queryString : string;
 
-        // add JWT token if existing
-        if (this.authorizationToken) {
-            headers['Authorization'] = `Bearer ${this.authorizationToken}`;
-        }
+                // add JWT token if existing
+                if (this.authorizationToken) {
+                headers['Authorization'] = `Bearer ${this.authorizationToken}`;
+                }
 
-        Object.keys(headers).forEach(headerName => {
-            headerData = headerData.append(headerName, headers[headerName]);
-        });
+                Object.keys(headers).forEach(headerName => {
+                headerData = headerData.append(headerName, headers[headerName]);
+                });
 
-        if (queryStringParameters) {
-            queryStringKeys = Object.keys(queryStringParameters);
-            queryString = (queryStringKeys.length > 0 ? '?' + (queryStringKeys.map((key : string) => key + '=' + encodeURIComponent(queryStringParameters[key])).join('&')): '');
+                if (queryStringParameters) {
+                queryStringKeys = Object.keys(queryStringParameters);
+                queryString = (queryStringKeys.length > 0 ? '?' + (queryStringKeys.map((key : string) => key + '=' + encodeURIComponent(queryStringParameters[key])).join('&')): '');
 
-            url += queryString;
-        }
+                url += queryString;
+                }
 
-        if (json) {
-            headerData = headerData.append('Content-Type', 'application/json');
-            bodyData = JSON.stringify(json);
-        }else if (form) {
-            bodyData = new FormData();
+                if (json) {
+                headerData = headerData.append('Content-Type', 'application/json');
+                bodyData = JSON.stringify(json);
+                }else if (form) {
+                bodyData = new FormData();
 
-            Object.keys(form).forEach(paramName => {
+                Object.keys(form).forEach(paramName => {
                 bodyData.append(paramName, form[paramName]);
-            });
-        }
+                });
+                }
 
-        // pack request options
-        requestOptions = {
-            headers: headerData
-        };
+                // pack request options
+                requestOptions = {
+                headers: headerData
+                };
 
-        let requestObserve: Observable<Object>;
+                let requestObserve: Observable<Object>;
 
-        switch (method) {
+                    switch (method) {
 
-            case 'POST':
-                requestObserve = this.http.post(url, bodyData, requestOptions);
-                break;
+                    case 'POST':
+                    requestObserve = this.http.post(url, bodyData, requestOptions);
+                    break;
 
-            case 'PUT':
-                requestObserve = this.http.put(url, bodyData, requestOptions);
-                break;
+                    case 'PUT':
+                    requestObserve = this.http.put(url, bodyData, requestOptions);
+                    break;
 
-            case 'PATCH':
-                requestObserve = this.http.patch(url, bodyData, requestOptions);
-                break;
+                    case 'PATCH':
+                    requestObserve = this.http.patch(url, bodyData, requestOptions);
+                    break;
 
-            case 'DELETE':
-                requestObserve = this.http.delete(url, requestOptions);
-                break;
+                    case 'DELETE':
+                    requestObserve = this.http.delete(url, requestOptions);
+                    break;
 
-            case 'GET':
-            default:
-              requestObserve = this.http.get(url, requestOptions);
-        }
-        return requestObserve;
-    }
+                    case 'GET':
+                    default:
+                    requestObserve = this.http.get(url, requestOptions);
+                    }
+                    return requestObserve;
+                    }
 
-{{#methods}}
-    {{> method}}
+                    {{#methods}}
+                        {{> method}}
 
-{{/methods}}
-}
+                    {{/methods}}
+                    }
