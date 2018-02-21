@@ -13,170 +13,159 @@ import 'rxjs/add/observable/throw';
 import {TimeoutError} from 'rxjs/Rx';
 
 export interface IValidationError {
-subject: string;
-message: string;
+    subject: string;
+    message: string;
 }
 
 export interface IErrorResponse {
-validationErrors?: IValidationError[];
-headers?: HttpHeaders;
-ok?: boolean;
-status?: number;
-statusText?: string;
-type?: any;
-url?: string;
-// original body or event
-_body?: any;
-body?: any;
+    validationErrors?: IValidationError[];
+    headers?: HttpHeaders;
+    ok?: boolean;
+    status?: number;
+    statusText?: string;
+    type?: any;
+    url?: string;
+    // original body or event
+    _body?: any;
+    body?: any;
 
-// php soft error
-code?: number;
-message?: string;
-trace?: any;
-errors?: any;
+    // php soft error
+    code?: number;
+    message?: string;
+    trace?: any;
+    errors?: any;
 
-isHandled?: boolean;
-isValidationError?: boolean;
-isPermissionDenied?: boolean;
-isLocked?: boolean;
-isServiceUnavailable?: boolean;
-isUnknownError?: boolean;
-isNotFound?: boolean;
-isThrottleBlocked?: boolean;
-isTimeoutError?: boolean;
+    isHandled?: boolean;
+    isValidationError?: boolean;
+    isPermissionDenied?: boolean;
+    isLocked?: boolean;
+    isServiceUnavailable?: boolean;
+    isUnknownError?: boolean;
+    isNotFound?: boolean;
+    isThrottleBlocked?: boolean;
+    isTimeoutError?: boolean;
 
-setHandled?: () => void;
+    setHandled?: () => void;
 }
 
 export class ErrorResponse implements IErrorResponse {
 
-validationErrors?: IValidationError[] = [];
-headers?: HttpHeaders = null;
-ok?: boolean = false;
-status?: number = -1;
-statusText?: string = '';
-type?: any = 'Error';
-url?: string = '';
-_body?: any = null;
-body?: any = null;
+    validationErrors?: IValidationError[] = [];
+    headers?: HttpHeaders = null;
+    ok?: boolean = false;
+    status?: number = -1;
+    statusText?: string = '';
+    type?: any = 'Error';
+    url?: string = '';
+    _body?: any = null;
+    body?: any = null;
 
-// php soft error
-code?: number = -1;
-message?: string = '';
-trace?: any = null;
-errors?: any = null;
+    // php soft error
+    code?: number = -1;
+    message?: string = '';
+    trace?: any = null;
+    errors?: any = null;
 
-isHandled?: boolean = false;
-isValidationError?: boolean = false;
-isPermissionDenied?: boolean = false;
-isLocked?: boolean = false;
-isServiceUnavailable?: boolean = false;
-isNotFound?: boolean = false;
-isUnknownError?: boolean = true;
-isThrottleBlocked?: boolean = false;
-isTimeoutError?: boolean = false;
+    isHandled?: boolean = false;
+    isValidationError?: boolean = false;
+    isPermissionDenied?: boolean = false;
+    isLocked?: boolean = false;
+    isServiceUnavailable?: boolean = false;
+    isNotFound?: boolean = false;
+    isUnknownError?: boolean = true;
+    isThrottleBlocked?: boolean = false;
+    isTimeoutError?: boolean = false;
 
-constructor(errorResponse?: IErrorResponse) {
+    constructor(errorResponse?: IErrorResponse) {
 
-if (errorResponse === 'ERR_TIMEOUT') {
-this.isTimeoutError = true;
-return;
-}
-this._body = errorResponse._body;
-this._parseBody();
+        if (errorResponse === 'ERR_TIMEOUT') {
+            this.isTimeoutError = true;
+            return;
+        }
 
-this.headers = errorResponse.headers;
-this.ok = errorResponse.ok;
-this.status = errorResponse.status;
-this.statusText = errorResponse.statusText;
-this.type = errorResponse.type;
-this.url = errorResponse.url;
+        this._body = errorResponse._body;
+        this._parseBody();
 
-// php soft error
-this.code = errorResponse.code;
-this.message = errorResponse.message;
+        this.headers = errorResponse.headers;
+        this.ok = errorResponse.ok;
+        this.status = errorResponse.status;
+        this.statusText = errorResponse.statusText;
+        this.type = errorResponse.type;
+        this.url = errorResponse.url;
 
-if (errorResponse.trace) {
-this.trace = true;
-}
-this.errors = errorResponse.errors;
+        // php soft error
+        this.code = errorResponse.code;
+        this.message = errorResponse.message;
 
-this._handleStatus();
-}
+        if (errorResponse.trace) {
+            this.trace = true;
+        }
 
-private _parseBody() {
-// TODO: Implement string check.
-if (this._body && typeof(this._body) === 'string') {
-try {
-this.body = JSON.parse(this._body);
-} catch(e) {} // forget because body is no JSON in this case
-}
-}
+        this.errors = errorResponse.errors;
+        this._handleStatus();
+    }
 
-private _processValidationErrors() {
+    private _parseBody() {
+        // TODO: Implement string check.
+        if (this._body && typeof(this._body) === 'string') {
+            try {
+                this.body = JSON.parse(this._body);
+            } catch(e) {} // forget because body is no JSON in this case
+        }
+    }
 
-if (this.body &&
-(!this.body.errors || (
-this.body.errors && this.body.errors.length === 0
-))
-) {
+    private _processValidationErrors() {
+        if (this.body && (!this.body.errors || (this.body.errors && this.body.errors.length === 0))) {
+            for (let fieldName in this.body) {
+                if (this.body.hasOwnProperty(fieldName)
+                    && this.body[fieldName]
+                    && typeof this.body[fieldName] === 'string'
+                    && this.body[fieldName].length > 0) {
 
-for (let fieldName in this.body) {
+                        this.validationErrors.push({
+                            subject: fieldName,
+                            message: this.body[fieldName]
+                        });
+                }
+            }
+        }
 
-if (this.body.hasOwnProperty(fieldName) &&
-this.body[fieldName] &&
-typeof this.body[fieldName] === 'string' &&
-this.body[fieldName].length > 0) {
+        if (this.body && this.body.errors) {
+            for (let fieldName in this.body.errors) {
+                if (this.body.errors.hasOwnProperty(fieldName)
+                    && this.body.errors[fieldName]
+                    && this.body.errors[fieldName][0]) {
 
-this.validationErrors.push({
-subject: fieldName,
-message: this.body[fieldName]
-});
-}
-}
-}
+                    this.validationErrors.push({
+                        subject: fieldName,
+                        message: this.body.errors[fieldName][0]
+                    });
+                }
+            }
+        }
 
-if (this.body &&
-this.body.errors) {
+        if (this.errors) {
+            for (let errorKey in this.errors) {
+                if (this.errors.hasOwnProperty(errorKey)) {
 
-for (let fieldName in this.body.errors) {
+                    this.validationErrors.push({
+                        subject: errorKey,
+                        message: this.errors[errorKey]
+                    });
+                }
+            }
+        }
 
-if (this.body.errors.hasOwnProperty(fieldName) &&
-this.body.errors[fieldName] &&
-this.body.errors[fieldName][0]) {
+        // fallback to simple error message; only if no other validation errors can be found
+        if (this.message && this.validationErrors.length == 0) {
+            this.validationErrors.push({
+                subject: 'general-error-message',
+                message: this.message
+            });
+        }
+    }
 
-this.validationErrors.push({
-subject: fieldName,
-message: this.body.errors[fieldName][0]
-});
-}
-}
-}
-
-if (this.errors) {
-
-for (let errorKey in this.errors) {
-
-if (this.errors.hasOwnProperty(errorKey)) {
-
-this.validationErrors.push({
-subject: errorKey,
-message: this.errors[errorKey]
-});
-}
-}
-}
-
-// fallback to simple error message; only if no other validation errors can be found
-if (this.message && this.validationErrors.length == 0) {
-
-this.validationErrors.push({
-subject: 'general-error-message',
-message: this.message
-});
-}
-}
-
+// TODO format code below
 private _handleStatus() {
 
 // if code is defined, status is not (because it's a php-level error)
@@ -428,7 +417,7 @@ export class IAbstractApiResponse<R extends IAbstractResponse, D> {
     {{/definitions}}
 
     {{#enumerations}}
-        enum {{tsType}} {
+        export enum {{tsType}} {
 
         {{#enum}}{{.}} = '{{.}}',{{/enum}}
         }

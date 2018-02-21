@@ -92,6 +92,6 @@ domain?: string
     // concat path
     url = requestDomain + path;
 
-    return this.request('POST', url, queryStringParameters, json, form, headers);
+    return this.request('{{method}}', url, queryStringParameters, json, form, headers);
 
     };
