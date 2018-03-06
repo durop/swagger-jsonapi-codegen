@@ -1,6 +1,6 @@
 {
   "name": "swagger-jsonapi-codegen",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": " A code generator based on swagger-codegen ",
   "main": "./node_modules/ts-node/dist/bin.js build-typescript.js",
   "directories": {
