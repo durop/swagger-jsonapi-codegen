@@ -34,5 +34,8 @@
     "mustache": "^2.3.0",
     "ts-node": "^4.1.0",
     "typescript": "^2.7.1"
+  },
+  "devDependencies": {
+    "jest": "^22.4.2"
   }
 }
