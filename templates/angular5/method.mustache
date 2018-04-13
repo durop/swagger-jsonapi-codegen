@@ -13,6 +13,7 @@
 {{#parameters}}{{^isSingleton}}'{{&camelCaseName}}'{{&cardinality}}: {{> type}},
 {{/isSingleton}}{{/parameters}}
 },
+isResponseText?: boolean,
 queryStringParameters?: any,
 headers?: any,
 domain?: string
@@ -92,6 +93,6 @@ domain?: string
     // concat path
     url = requestDomain + path;
 
-    return this.request('{{method}}', url, queryStringParameters, json, form, headers);
+    return this.request('{{method}}', url, queryStringParameters, json, form, headers, isResponseText);
 
     };
