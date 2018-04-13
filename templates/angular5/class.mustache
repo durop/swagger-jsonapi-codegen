@@ -479,7 +479,7 @@ export class IAbstractApiResponse<R extends IAbstractResponse, D> {
             this.requestHook = handler;
             }
 
-            private request(method: string, url: string, queryStringParameters: any, json: any, form: any, headers: any) : Observable<Object> {
+            private request(method: string, url: string, queryStringParameters: any, json: any, form: any, headers: any, isResponseText: boolean) : Observable<Object> {
 
                 if (!this.requestHook()) {
                 return;
@@ -522,6 +522,9 @@ export class IAbstractApiResponse<R extends IAbstractResponse, D> {
                 requestOptions = {
                 headers: headerData
                 };
+                if (isResponseText) {
+                requestOptions['responseType'] = 'text';
+                }
 
                 let requestObserve: Observable<Object>;
 
