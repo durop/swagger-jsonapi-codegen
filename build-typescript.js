@@ -7,7 +7,7 @@ program
   .option('-i, --input [path]', 'The file to use')
   .option('-o, --output_path [path]', 'The output for the api ts to be placed')
   .option('-n, --output_name [name]', 'Defaults to the api_<version>.ts')
-  .option('-u, --url_base [url]', 'The base path to the api, overrides the path in the swagger')
+  .option('-u, --url_host [url]', 'The host to the api, overrides the host in the swagger. EG: -u https://www.yourdomain.com')
   // TODO .option('-t, --template-class [name]', 'Path to custom class template')
   // TODO .option('-t, --template-method [name]', 'Path to custom method template')
   // TODO .option('-t, --template-type [name]', 'Path to custom type template')
@@ -18,7 +18,7 @@ let tsSourceCode = CodeGen.getTypescriptCode({
   className: 'Api',
   moduleName: 'Api',
   swagger: swagger,
-  domainOverride: program.url_base || false,
+  host: program.url_host || false,
   template: {
     'class': fs.readFileSync(path.join(__dirname, './templates/angular5/class.mustache'), 'utf-8'),
     'method': fs.readFileSync(path.join(__dirname, './templates/angular5/method.mustache'), 'utf-8'),
