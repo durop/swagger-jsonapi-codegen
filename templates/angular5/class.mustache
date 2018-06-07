@@ -507,10 +507,10 @@ export class IAbstractApiResponse<R extends IAbstractResponse, D> {
                 url += queryString;
                 }
 
-                if (json) {
+                if (Object.keys(json).length > 0) {
                 headerData = headerData.append('Content-Type', 'application/json');
                 bodyData = JSON.stringify(json);
-                }else if (form) {
+                }else if (Object.keys(form).length > 0) {
                 bodyData = new FormData();
 
                 Object.keys(form).forEach(paramName => {
